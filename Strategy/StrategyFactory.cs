@@ -26,7 +26,7 @@ namespace Trading_bot.Strategy
             {
                 "StrategyA" => new StrategyA("StrategyA", _core, _exchange, cash),
                 "StrategyB" => new StrategyB("StrategyB", _core, _exchange, cash),
-                // Add more strategies as needed
+
                 _ => throw new ArgumentException("Invalid strategy type")
             };
         }

@@ -9,6 +9,11 @@ namespace Trading_bot.Central
 {
     internal class Core
     {
+        private int periodMin = 1;
+        private int periodInMinutes;
+        private OHCLData currentOHCLData;
+        public List<OHCLData> OHCLDatas { get; private set; }
+
         public Core(int periodInMinutes)
         {
             this.periodInMinutes = periodInMinutes;
@@ -20,12 +25,7 @@ namespace Trading_bot.Central
             //Console.WriteLine($"Core received price: {price.PriceValue}");
             ProcessPrice(price);
         }
-
-
-        private int periodMin = 1;
-        private int periodInMinutes;
-        private OHCLData currentOHCLData;
-        public List<OHCLData> OHCLDatas { get; private set; }
+        
         public void ProcessPrice(Price price)
         {
             if (currentOHCLData.Ticker == "")

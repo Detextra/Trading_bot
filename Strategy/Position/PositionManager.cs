@@ -63,17 +63,17 @@ namespace Trading_bot.Strategy.Position
             
         }
 
-        public bool AddPosition(OrderSpotDone order)
+        public bool AddPosition(PositionSpot position)
         {
-            PositionSpot newPosition = new PositionSpot(order.OrderId, order.Ticker, order.Quantity, order.Price);
-            Positions.Add(newPosition);
+            //PositionSpot newPosition = new PositionSpot(order.OrderId, order.Ticker, order.Quantity, order.Price);
+            Positions.Add(position);
             return true;
         }
 
-        public bool AddPosition(OrderLimitDone order)
+        public bool AddPosition(PositionLimit position)
         {
-            PositionLimit newPosition = new PositionLimit(order.OrderId, order.Ticker, order.Quantity, order.Price, order.stopLossPrice, order.takeProfitPrice);
-            Positions.Add(newPosition);
+            //PositionLimit newPosition = new PositionLimit(order.OrderId, order.Ticker, order.Quantity, order.Price, order.stopLossPrice, order.takeProfitPrice);
+            Positions.Add(position);
             return true;
         }
 

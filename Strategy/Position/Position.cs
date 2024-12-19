@@ -51,8 +51,10 @@ namespace Trading_bot.Strategy.Position
         {
             if (marketPrice <= stopLossPrice || marketPrice >= takeProfitPrice)
             {
-                //signal vente
+                // selling signal
+                // TODO which signal send ? a bool ?
                 Console.WriteLine("vendage");
+
             }
         }
     }

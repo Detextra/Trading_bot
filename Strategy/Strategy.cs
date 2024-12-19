@@ -8,6 +8,7 @@ using Trading_bot.Data;
 using Trading_bot.Market;
 using Trading_bot.Strategy.Position;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using static Trading_bot.Market.Order;
 
 namespace Trading_bot.Strategy
 {
@@ -79,20 +80,20 @@ namespace Trading_bot.Strategy
             else if (orderDone.Quantity > 0)
             {
                 // buying
-                if (positionManager.AddPosition(orderDone))
-                {
-                    cash -= orderDone.Quantity * orderDone.Price;
-                }
+                //if (positionManager.AddPosition(orderDone))
+                //{
+                //    cash -= orderDone.Quantity * orderDone.Price;
+                //}
                 
                 
             } 
             return orderDone;
         }
 
-        public OrderLimitDone SendOrder(OrderLimit order)
+        public PositionLimit SendOrder(OrderLimit order)
         {
             
-            OrderLimitDone orderDone = exchange.ProcessOrder(order);
+            PositionLimit positionDone = exchange.ProcessOrder(order);
             // In a limit order, the order is only ended by the stopLoss or the takeProfit, so the "sell" is automatic
             //if (orderDone.Quantity < 0)
             //{
@@ -100,16 +101,19 @@ namespace Trading_bot.Strategy
             //    cash += Math.Abs(orderDone.Quantity) * orderDone.Price;
             //    positionManager.RemovePosition(orderDone.Ticker, orderDone.Quantity);
             //}
-            if (orderDone.Quantity > 0)
+            if (positionDone != null)
             {
-                // buying
-                if (positionManager.AddPosition(orderDone))
+                if (positionDone.quantity > 0)
                 {
-                    cash -= orderDone.Quantity * orderDone.Price;
-                }
+                    // buying
+                    if (positionManager.AddPosition(positionDone))
+                    {
+                        cash -= positionDone.quantity * positionDone.price;
+                    }
 
+                }
             }
-            return orderDone;
+                return positionDone;
         }
 
         public void PrintSummaryOfStrategy ()
