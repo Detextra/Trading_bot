@@ -16,6 +16,7 @@ namespace Trading_bot.Strategy
     {
         public string strategyName;
         public PositionManager positionManager;
+        public OrderIn orderInputToMarket;
         public Core core;
         public Exchange exchange;
         public decimal cash;
@@ -25,6 +26,7 @@ namespace Trading_bot.Strategy
         public Strategy(string strategyName, Core core, Exchange exchange, decimal cash)
         {
             this.strategyName = strategyName;
+            orderInputToMarket = new OrderIn();
             positionManager = new PositionManager();
             this.exchange = exchange;
             this.cash = cash;
@@ -34,9 +36,10 @@ namespace Trading_bot.Strategy
 
         public virtual void RunStrategy()
         {
-            CheckPositionStatus(exchange.GetPrice());
+            SendOrderSignal();
         }
 
+        // loop among all the position of the strategy to check if one need to be sold
         public void CheckPositionStatus(decimal price)
         {
             positionManager.CheckPositionStatus(price);
@@ -90,10 +93,9 @@ namespace Trading_bot.Strategy
             return orderDone;
         }
 
-        public PositionLimit SendOrder(OrderLimit order)
+        public int SendOrderSignal ()
         {
             
-            PositionLimit positionDone = exchange.ProcessOrder(order);
             // In a limit order, the order is only ended by the stopLoss or the takeProfit, so the "sell" is automatic
             //if (orderDone.Quantity < 0)
             //{
@@ -108,7 +110,8 @@ namespace Trading_bot.Strategy
                     // buying
                     if (positionManager.AddPosition(positionDone))
                     {
-                        cash -= positionDone.quantity * positionDone.price;
+                        // positive signal telling to buy 1 asset
+                        return 1;
                     }
 
                 }
