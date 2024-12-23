@@ -93,7 +93,7 @@ namespace Trading_bot.Strategy
             return orderDone;
         }
 
-        public void SendOrderSignal (int quantity)
+        public void SendOrderSignal (OrderLimit order)
         {
 
             // In a limit order, the order is only ended by the stopLoss or the takeProfit, so the "sell" is automatic
@@ -103,7 +103,10 @@ namespace Trading_bot.Strategy
             //    cash += Math.Abs(orderDone.Quantity) * orderDone.Price;
             //    positionManager.RemovePosition(orderDone.Ticker, orderDone.Quantity);
             //}
-            orderInputToMarket.AddingFeesAndSlippageToOrder(quantity);
+            decimal price = exchange.GetPrice();
+            OrderLimit toOrder = new OrderLimit(GenerateOrderId(), "", price, 1,
+                price * (decimal)0.98, price * (decimal)1.05);
+            orderInputToMarket.AddingFeesAndSlippageToOrder(toOrder);
         }
 
         public void PrintSummaryOfStrategy ()

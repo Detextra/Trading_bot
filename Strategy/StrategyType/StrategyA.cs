@@ -43,7 +43,8 @@ namespace Trading_bot.Strategy.StrategyType
                     //{
                     //    Console.WriteLine("enough cash -> buying");
                     //    // stop loss 2%, profit 5%
-                    //    OrderLimit order = new OrderLimit(GenerateOrderId(), exchange.Price.Ticker, exchange.Price.PriceValue, buyingQuantity, exchange.Price.PriceValue * 0.98m, exchange.Price.PriceValue * 1.05m);
+                        
+                        OrderLimit order = new OrderLimit(GenerateOrderId(), exchange.Price.Ticker, exchange.Price.PriceValue, buyingQuantity, exchange.Price.PriceValue * 0.98m, exchange.Price.PriceValue * 1.05m);
                     //    SendOrder(order);
                     //}
                     SendOrderSignal(1);
