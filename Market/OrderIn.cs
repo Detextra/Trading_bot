@@ -19,7 +19,7 @@ namespace Trading_bot.Market
 
 		public OrderLimit AddingFeesAndSlippageToOrder (int signal)
 		{
-			OrderLimit orderLimit = new OrderLimit();
+			return null;
 		}
 
 	}
