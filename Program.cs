@@ -15,7 +15,7 @@ namespace Trading_bot
         static void Main(string[] args)
         {
             DataExtractor dataExtractor = new DataExtractor();
-            Core core = new Core(15);
+            ohclManager core = new ohclManager(15);
             Exchange exchange = new Exchange();
 
             StrategyManager strategyManager = new StrategyManager(core, exchange);

@@ -11,12 +11,12 @@ namespace Trading_bot.Strategy
 {
     internal class StrategyManager
     {
-        public Core core;
+        public ohclManager core;
         public Exchange exchange;
         public List<Strategy> strategyList;
         private StrategyFactory strategyFactory;
 
-        public StrategyManager (Core core, Exchange exchange)
+        public StrategyManager (ohclManager core, Exchange exchange)
         {
             this.core = core;
             this.exchange = exchange;

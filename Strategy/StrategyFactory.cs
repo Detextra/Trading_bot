@@ -11,10 +11,10 @@ namespace Trading_bot.Strategy
 {
     internal class StrategyFactory
     {
-        private readonly Core _core;
+        private readonly ohclManager _core;
         private readonly Exchange _exchange;
 
-        public StrategyFactory(Core core, Exchange exchange)
+        public StrategyFactory(ohclManager core, Exchange exchange)
         {
             _core = core;
             _exchange = exchange;

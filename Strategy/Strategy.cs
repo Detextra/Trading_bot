@@ -17,13 +17,13 @@ namespace Trading_bot.Strategy
         public string strategyName;
         public PositionManager positionManager;
         public OrderIn orderInputToMarket;
-        public Core core;
+        public ohclManager core;
         public Exchange exchange;
         public decimal cash;
         public int orderId;
         private readonly object orderIdLock = new object();
 
-        public Strategy(string strategyName, Core core, Exchange exchange, decimal cash)
+        public Strategy(string strategyName, ohclManager core, Exchange exchange, decimal cash)
         {
             this.strategyName = strategyName;
             positionManager = new PositionManager();

@@ -12,16 +12,6 @@ class DataExtractor
 
     public static List<OHCLData> data15min;
 
-    //static void Main()
-    //{
-    //    string startDate = "20230101"; // Start date in format YYYYMMDD
-    //    string endDate = "20240822";   // End date in format YYYYMMDD
-
-    //    //SavePricesBetweenDates(dataSource, "../../../../data/EURUSD/EURUSD_"+startDate+"-"+endDate+".txt", startDate, endDate);
-
-    //    //"../../../../data/EURUSD/EURUSD_test1Min_dumb_values.txt"
-    //}
-
     public event EventHandler<Price> PriceReceived;
 
     public void ReadPriceAndSendThem (string inputOHCLFile)

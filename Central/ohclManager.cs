@@ -7,14 +7,15 @@ using Trading_bot.Data;
 
 namespace Trading_bot.Central
 {
-    internal class Core
+    internal class ohclManager
     {
         private int periodMin = 1;
         private int periodInMinutes;
         private OHCLData currentOHCLData;
         public List<OHCLData> OHCLDatas { get; private set; }
+        public List<int, List<OHCLData>> ohclDatas { get; private set; }
 
-        public Core(int periodInMinutes)
+        public ohclManager(int periodInMinutes)
         {
             this.periodInMinutes = periodInMinutes;
             OHCLDatas = new List<OHCLData>();

@@ -11,7 +11,7 @@ namespace Trading_bot.Strategy.StrategyType
 {
     internal class StrategyB : Strategy
     {
-        public StrategyB(string StrategyName, Core core, Exchange exchange, decimal cash) : base(StrategyName, core, exchange, cash)
+        public StrategyB(string StrategyName, ohclManager core, Exchange exchange, decimal cash) : base(StrategyName, core, exchange, cash)
         {
 
         }
