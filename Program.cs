@@ -15,7 +15,8 @@ namespace Trading_bot
         static void Main(string[] args)
         {
             DataExtractor dataExtractor = new DataExtractor();
-            Core core = new Core(15);
+            int[] ohclPeriods= { 1, 5, 15 };
+            Core core = new Core(ohclPeriods);
             Exchange exchange = new Exchange();
 
             StrategyManager strategyManager = new StrategyManager(core, exchange);
@@ -25,11 +26,12 @@ namespace Trading_bot
             dataExtractor.PriceReceived += exchange.OnPriceReceived;
             dataExtractor.PriceReceived += strategyManager.OnPriceReceived;
 
-            dataExtractor.ReadPriceAndSendThem("../../../../data/EURUSD/EURUSD_20230101-20240822.txt");
-
+            //dataExtractor.ReadPriceAndSendThem("../../../../data/EURUSD/EURUSD_20230101-20240822.txt");
+            dataExtractor.ReadPriceAndSendThem("../../../../data/EURUSD/EURUSD_test1Min_dumb_values.txt");
+            
 
             // Printing results
-            //core.PrintOHCLlist(core.OHCLDatas);
+            core.PrintOHCLlist();
             strategyManager.PrintSummaryOfStrategies();
         }
     }
