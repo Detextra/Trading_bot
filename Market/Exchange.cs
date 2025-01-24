@@ -22,7 +22,7 @@ namespace Trading_bot.Market
 
         public void OnPriceReceived(object sender, Price price)
         {
-            Console.WriteLine($"Exchange received price: {price.PriceValue}");
+            //Console.WriteLine($"Exchange received price: {price.PriceValue}");
             Price = price;
             allPositions.CheckPositionStatus(GetPrice());
         }
@@ -48,7 +48,7 @@ namespace Trading_bot.Market
             {
                 if (o.Price >= o.stopLossPrice && o.Price <= o.takeProfitPrice)
                 {
-                    Console.WriteLine("Order Limit processed for " + o.Quantity + " asset at " + o.Price);
+                    //Console.WriteLine("Order Limit processed for " + o.Quantity + " asset at " + o.Price);
                     return new PositionLimit(o.OrderId, o.Ticker, o.Quantity, this.GetPrice(), o.stopLossPrice, o.takeProfitPrice);
                     //return new OrderLimitDone(o.OrderId, o.Ticker, o.Price, o.Quantity, o.stopLossPrice, o.takeProfitPrice);
                 }

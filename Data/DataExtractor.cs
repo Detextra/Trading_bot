@@ -10,7 +10,7 @@ class DataExtractor
     // https://forextester.com/data/datasources
     public static string dataSource = "../../../../data/EURUSD/EURUSD_23y_1min.txt";
 
-    public static List<OHCLData> data15min;
+    public static List<OhclData> data15min;
 
     //static void Main()
     //{

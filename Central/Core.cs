@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
 using Trading_bot.Data;
@@ -9,16 +10,18 @@ namespace Trading_bot.Central
 {
     internal class Core
     {
-        private int periodMin = 1;
-        private int periodInMinutes;
-        private OHCLData currentOHCLData;
-        public List<OHCLData> OHCLDatas { get; private set; }
 
-        public Core(int periodInMinutes)
+        public List<OhclList> OhclDatas { get; private set; }
+
+        public Core(int[] periodInMinutes)
         {
-            this.periodInMinutes = periodInMinutes;
-            OHCLDatas = new List<OHCLData>();
-            currentOHCLData = new OHCLData("", "", "", 0, 0, 0, 0);
+            OhclDatas = new List<OhclList>();
+            foreach (int period in periodInMinutes)
+            {
+                Console.WriteLine("Creating OhclDatas for " +  period + " minutes period");
+                OhclDatas.Add(new OhclList(period));
+            }
+                
         }
         public void OnPriceReceived(object sender, Price price)
         {
@@ -28,46 +31,59 @@ namespace Trading_bot.Central
         
         public void ProcessPrice(Price price)
         {
-            if (currentOHCLData.Ticker == "")
+            foreach (var item in OhclDatas)
             {
-                currentOHCLData.Ticker = price.Ticker;
-                currentOHCLData.Date = price.Date;
-                currentOHCLData.Time = price.Time;
-                currentOHCLData.OpenPrice = price.PriceValue;
-                currentOHCLData.HighPrice = price.PriceValue;
-                currentOHCLData.LowPrice = price.PriceValue;
-            }
+                OhclData ohclData = item.currentOhcl;
+                // this is a new OhclData
+                if (string.IsNullOrEmpty(ohclData.Date) && string.IsNullOrEmpty(ohclData.Time))
+                {
+                   ohclData.Ticker = price.Ticker;
+                   ohclData.Date = price.Date;
+                   ohclData.Time = price.Time;
+                   ohclData.OpenPrice = price.PriceValue;
+                   ohclData.HighPrice = price.PriceValue;
+                   ohclData.ClosePrice = price.PriceValue;
+                   ohclData.LowPrice = price.PriceValue;
+                   ohclData.CurrentPrice = price.PriceValue;
+                    continue;
+                }
 
-            if (price.PriceValue > currentOHCLData.HighPrice)
-            {
-                currentOHCLData.HighPrice = price.PriceValue;
-            }
-            if (price.PriceValue < currentOHCLData.LowPrice)
-            {
-                currentOHCLData.LowPrice = price.PriceValue;
-            }
+                // Store DateTime objects instead of separate Date and Time strings in your OhclData and PriceData objects.
 
-            if (periodMin == periodInMinutes)
-            {
-                currentOHCLData.ClosePrice = price.PriceValue;
-                OHCLDatas.Add(currentOHCLData);
+                // Use Span<char> for Parsing ex : int year = int.Parse(date.Slice(0, 4));
 
-                currentOHCLData = new OHCLData("", "", "", 0, 0, 0, 0);
-                periodMin = 1;
-            }
-            else
-            {
-                periodMin++;
+                DateTime OhclDate = DateTime.ParseExact(ohclData.Date, "yyyyMMdd", null);
+                TimeSpan OhclTime = TimeSpan.ParseExact(ohclData.Time, "hhmmss", null);
+                OhclDate = OhclDate.Add(OhclTime);
+
+                DateTime PriceDate = DateTime.ParseExact(price.Date, "yyyyMMdd", null);
+                TimeSpan PriceTime = TimeSpan.ParseExact(price.Time, "hhmmss", null);
+                PriceDate = PriceDate.Add(PriceTime);
+
+                // Instead of recalculating the difference between priceDateTime and ohclDateTime for every iteration, use a precomputed threshold time.
+                if ( (PriceDate - OhclDate).TotalMinutes >= item.OhclTimeFrame)
+                {
+                    item.Add(price);
+                }
+                else
+                {
+                   ohclData.CurrentPrice = price.PriceValue;
+
+                    if (ohclData.HighPrice < price.PriceValue)
+                        ohclData.HighPrice = price.PriceValue;
+
+                    if (ohclData.LowPrice > price.PriceValue)
+                        ohclData.LowPrice = price.PriceValue;
+                }
+                //last Ohcl data is not stored because there is no "next" Ohcl Data. When a new Ohcl Data is created the previous one is stored
             }
         }
-        public void PrintOHCLlist(List<OHCLData> datas)
+
+        public void PrintOHCLlist()
         {
-            Console.WriteLine("Ticker\tDate\tTime\tOpenPrice\tHighPrice\tLowPrice\tClosePrice");
-            foreach (OHCLData o in datas)
-            {
-                Console.WriteLine("" + o.Ticker + "\t" + o.Date + "\t" + o.Time + "\t"
-                    + o.OpenPrice + "\t" + o.HighPrice + "\t" + o.LowPrice + "\t" + o.ClosePrice);
-            }
+            foreach (OhclList list in OhclDatas) {
+                list.PrintOhclList();
+            }            
         }
 
     }

@@ -53,7 +53,7 @@ namespace Trading_bot.Strategy.Position
             {
                 // selling signal
                 // TODO which signal send ? a bool ?
-                Console.WriteLine("vendage");
+                //Console.WriteLine("vendage");
 
             }
         }

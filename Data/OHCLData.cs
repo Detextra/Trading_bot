@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace Trading_bot.Data
 {
-    internal class OHCLData
+    // If OhclData are accessed frequently but their fields don't change often, consider converting them to structs. Structs are stored on the stack and reduce heap allocations, improving performance in high-throughput scenarios.
+
+    internal class OhclData
     {
         public string Ticker;
         public string Date;
@@ -15,9 +17,12 @@ namespace Trading_bot.Data
         public decimal HighPrice;
         public decimal LowPrice;
         public decimal ClosePrice;
+        public decimal CurrentPrice;
 
-        public OHCLData(string Ticker, string Date, string Time, decimal OpenPrice, decimal HighPrice, decimal LowPrice, decimal ClosePrice) { 
-        
+        public OhclData(string Ticker, string Date, string Time, decimal OpenPrice, decimal HighPrice, 
+            decimal LowPrice, decimal ClosePrice, decimal currentPrice)
+        {
+
             this.Ticker = Ticker;
             this.Date = Date;
             this.Time = Time;
@@ -25,6 +30,12 @@ namespace Trading_bot.Data
             this.HighPrice = HighPrice;
             this.LowPrice = LowPrice;
             this.ClosePrice = ClosePrice;
+            this.CurrentPrice = currentPrice;
+        }
+
+        public static OhclData beforeFirstTick ()
+        {
+            return new OhclData("", "", "", -1, -1, -1, -1, -1);
         }
     }
 }

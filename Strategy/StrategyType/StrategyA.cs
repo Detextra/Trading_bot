@@ -18,7 +18,7 @@ namespace Trading_bot.Strategy.StrategyType
 
         public override void RunStrategy()
         {
-            List<OHCLData> oHCLDatas = core.OHCLDatas;
+            List<OhclData> oHCLDatas = core.OhclDatas[0].OhclDatas;
             CheckPositionStatus(exchange.GetPrice());
             if (oHCLDatas.Count > 2)
             {
@@ -37,7 +37,7 @@ namespace Trading_bot.Strategy.StrategyType
                 if (oHCLDatas[oHCLDatas.Count - 1].ClosePrice < oHCLDatas[oHCLDatas.Count - 2].ClosePrice)
                 {
                     //Console.WriteLine("Negative trend; money available: " + cash);
-                    //int buyingQuantity = 1;
+                    int buyingQuantity = 1;
                     //// negative trend on 1 candle
                     //if (CheckIfEnoughCashToBy(buyingQuantity))
                     //{
@@ -47,7 +47,9 @@ namespace Trading_bot.Strategy.StrategyType
                         OrderLimit order = new OrderLimit(GenerateOrderId(), exchange.Price.Ticker, exchange.Price.PriceValue, buyingQuantity, exchange.Price.PriceValue * 0.98m, exchange.Price.PriceValue * 1.05m);
                     //    SendOrder(order);
                     //}
-                    SendOrderSignal(1);
+
+
+                    //SendOrderSignal(1);
                 }
             }
             
