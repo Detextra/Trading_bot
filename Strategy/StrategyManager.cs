@@ -35,6 +35,15 @@ namespace Trading_bot.Strategy
             }
         }
 
+        public void OnOrderSold (object sender, OrderLimit order)
+        {
+            // there is no management of different strategies
+            // there is no management of actual selling price
+            Console.WriteLine("strat cash avant: +"+strategyList[0].cash);
+            strategyList[0].cash += order.Quantity * exchange.Price.PriceValue;
+            Console.WriteLine("strat cash apres: +"+strategyList[0].cash+ " ajout de: "+exchange.Price.PriceValue);
+        }
+
         public void AddStrategy (string strategyType, decimal startingCash)
         {
             Strategy strategy = strategyFactory.CreateStrategy(strategyType, startingCash);

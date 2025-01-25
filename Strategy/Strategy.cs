@@ -103,10 +103,7 @@ namespace Trading_bot.Strategy
             //    cash += Math.Abs(orderDone.Quantity) * orderDone.Price;
             //    positionManager.RemovePosition(orderDone.Ticker, orderDone.Quantity);
             //}
-            decimal price = exchange.GetPrice();
-            OrderLimit toOrder = new OrderLimit(GenerateOrderId(), "", price, 1,
-                price * (decimal)0.98, price * (decimal)1.05);
-            orderInputToMarket.AddingFeesAndSlippageToOrder(toOrder);
+            orderInputToMarket.AddingFeesAndSlippageToOrder(order);
         }
 
         public void PrintSummaryOfStrategy ()
