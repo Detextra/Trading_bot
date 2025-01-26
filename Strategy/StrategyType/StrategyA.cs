@@ -36,20 +36,19 @@ namespace Trading_bot.Strategy.StrategyType
                 //else 
                 if (oHCLDatas[oHCLDatas.Count - 1].ClosePrice < oHCLDatas[oHCLDatas.Count - 2].ClosePrice)
                 {
-                    //Console.WriteLine("Negative trend; money available: " + cash);
+                    
                     int buyingQuantity = 1;
-                    //// negative trend on 1 candle
-                    //if (CheckIfEnoughCashToBy(buyingQuantity))
-                    //{
-                    //    Console.WriteLine("enough cash -> buying");
-                    //    // stop loss 2%, profit 5%
-                        
-                        OrderLimit order = new OrderLimit(GenerateOrderId(), exchange.Price.Ticker, exchange.Price.PriceValue, buyingQuantity, exchange.Price.PriceValue * 0.98m, exchange.Price.PriceValue * 1.05m);
-                    //    SendOrder(order);
-                    //}
+                    // negative trend on 1 candle
+                    if (CheckIfEnoughCashToBy(buyingQuantity))
+                    {
+                        Console.WriteLine("Negative trend; ohcl-2 : " + oHCLDatas[oHCLDatas.Count - 2].ClosePrice +
+                        " ; ohcl-1 " + oHCLDatas[oHCLDatas.Count - 1].ClosePrice + " ; money available: " + cash);
 
-
-                    //SendOrderSignal(1);
+                        // stop loss 2%, profit 1%
+                        OrderLimit order = new OrderLimit(GenerateOrderId(), exchange.Price.Ticker, -1, buyingQuantity, exchange.Price.PriceValue * 0.98m, exchange.Price.PriceValue * 1.01m);
+                        SendOrderSignal(order);
+                        cash -= buyingQuantity * exchange.Price.PriceValue;
+                    }
                 }
             }
             

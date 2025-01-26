@@ -13,18 +13,20 @@ namespace Trading_bot.Market
         public Price Price;
 
         public PositionManager allPositions;
+        public OrderManagement allOrders;
 
         public Exchange ()
         {
             Price = new Price("", "", "", -1); ;
             allPositions = new PositionManager();
+            allOrders = new OrderManagement();
         }
 
         public void OnPriceReceived(object sender, Price price)
         {
             //Console.WriteLine($"Exchange received price: {price.PriceValue}");
             Price = price;
-            allPositions.CheckPositionStatus(GetPrice());
+            allOrders.CheckingOrderStatus(price.PriceValue);
         }
 
         // as OrderLimit utilize Position and no OrderLimitDone, use PositionSpot instead
@@ -42,19 +44,28 @@ namespace Trading_bot.Market
             return new OrderSpotDone(o.OrderId, "error no ticker", Price.PriceValue, 0);
         }
 
-        public PositionLimit ProcessOrder(OrderLimit o)
+        public void ProcessOrder(OrderLimit o)
         {
             if (o != null)
             {
-                if (o.Price >= o.stopLossPrice && o.Price <= o.takeProfitPrice)
-                {
-                    //Console.WriteLine("Order Limit processed for " + o.Quantity + " asset at " + o.Price);
-                    return new PositionLimit(o.OrderId, o.Ticker, o.Quantity, this.GetPrice(), o.stopLossPrice, o.takeProfitPrice);
-                    //return new OrderLimitDone(o.OrderId, o.Ticker, o.Price, o.Quantity, o.stopLossPrice, o.takeProfitPrice);
-                }
-                //return new OrderLimitDone(o.OrderId, o.Ticker, o.Price, 0, o.stopLossPrice, o.takeProfitPrice);
+                //if (o.Price >= o.stopLossPrice && o.Price <= o.takeProfitPrice)
+                //{
+                    allOrders.orders.Add(o);
+                    Console.WriteLine("Order Limit id: "+o.OrderId+" processed for " + o.Quantity + " asset at " + o.Price);
+                //}
+                //Console.WriteLine("Sl or TJ already hitten");
             }
-            return null;
+        }
+
+        // for debug purpose
+        public int CountQuantitiesFromOrdersLimit()
+        {   
+            int count = 0;
+            foreach (OrderLimit o in allOrders.orders)
+            {
+                count += o.Quantity;
+            }
+            return count;
         }
 
         public decimal GetPrice ()

@@ -26,13 +26,18 @@ namespace Trading_bot
             dataExtractor.PriceReceived += exchange.OnPriceReceived;
             dataExtractor.PriceReceived += strategyManager.OnPriceReceived;
 
-            //dataExtractor.ReadPriceAndSendThem("../../../../data/EURUSD/EURUSD_20230101-20240822.txt");
-            dataExtractor.ReadPriceAndSendThem("../../../../data/EURUSD/EURUSD_test1Min_dumb_values.txt");
+            exchange.allOrders.OrderSold += strategyManager.OnOrderSold;
+
+            dataExtractor.ReadPriceAndSendThem("../../../../data/EURUSD/EURUSD_20230101-20240822.txt");
+            //dataExtractor.ReadPriceAndSendThem("../../../../data/EURUSD/EURUSD_test1Min_dumb_values.txt");
             
 
             // Printing results
-            core.PrintOHCLlist();
+            //core.PrintOHCLlist();
             strategyManager.PrintSummaryOfStrategies();
+            Console.WriteLine("quantity in Orders: "+exchange.CountQuantitiesFromOrdersLimit()+ 
+                " actual market price: "+exchange.Price.PriceValue+ 
+                " = " + (exchange.CountQuantitiesFromOrdersLimit()* exchange.Price.PriceValue)+"$");
         }
     }
 }
