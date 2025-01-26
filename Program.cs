@@ -28,6 +28,11 @@ namespace Trading_bot
 
             exchange.allOrders.OrderSold += strategyManager.OnOrderSold;
 
+            foreach (var strategy in strategyManager.strategyList)
+            {
+                dataExtractor.PriceReceived += strategy.riskModule.OnPriceReceived;
+            }
+
             dataExtractor.ReadPriceAndSendThem("../../../../data/EURUSD/EURUSD_20230101-20240822.txt");
             //dataExtractor.ReadPriceAndSendThem("../../../../data/EURUSD/EURUSD_test1Min_dumb_values.txt");
             
@@ -38,6 +43,11 @@ namespace Trading_bot
             Console.WriteLine("quantity in Orders: "+exchange.CountQuantitiesFromOrdersLimit()+ 
                 " actual market price: "+exchange.Price.PriceValue+ 
                 " = " + (exchange.CountQuantitiesFromOrdersLimit()* exchange.Price.PriceValue)+"$");
+
+            foreach (var strategy in strategyManager.strategyList)
+            {
+                strategy.riskModule.PlotRiskData();
+            }
         }
     }
 }

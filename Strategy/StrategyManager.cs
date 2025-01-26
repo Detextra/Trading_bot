@@ -30,29 +30,22 @@ namespace Trading_bot.Strategy
             foreach (Strategy strategy in strategyList)
             {
                 strategy.RunStrategy();
-                
                 //Console.WriteLine(" qtt asset : "+strategy.positionManager.GetQuantityOfAsset());
             }
         }
 
         public void OnOrderSold (object sender, OrderLimit order)
         {
-            // there is no management of different strategies
-            // there is no management of actual selling price
-            
-
-            
             foreach (Strategy strategy in strategyList)
             {
                 if (order.OrderId.Contains(strategy.strategyName))
                 {
                     //Console.WriteLine("strat cash avant: " + strategy.cash);
-                    strategy.cash += order.Quantity * exchange.Price.PriceValue;
+                    strategy.cash += order.Quantity * order.Price;
                     //Console.WriteLine("strat cash apres: " + strategy.cash + " ajout de: " + exchange.Price.PriceValue);
+                    strategy.riskModule.ProcessOrderSold(order);
                 }
             }
-            
-            
         }
 
         public void AddStrategy (string strategyType, decimal startingCash)
