@@ -43,6 +43,7 @@ namespace Trading_bot.Risk
 
         public void ProcessOrderSold(OrderLimit orderLimit)
         {
+            // the cash is not substracted when asset is bought for the order => add the buying and solding price to OrderLimit
             cash += orderLimit.Price * orderLimit.Quantity;
             ordersLimit.Remove(orderLimit);
         }
