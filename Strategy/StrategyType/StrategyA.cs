@@ -45,7 +45,7 @@ namespace Trading_bot.Strategy.StrategyType
                         " ; ohcl-1 " + oHCLDatas[oHCLDatas.Count - 1].ClosePrice + " ; money available: " + cash);
 
                         // stop loss 2%, profit 1%
-                        OrderLimit order = new OrderLimit(GenerateOrderId(), exchange.Price.Ticker, exchange.Price.PriceValue, buyingQuantity, exchange.Price.PriceValue * 0.98m, exchange.Price.PriceValue * 1.01m);
+                        OrderLimit order = new OrderLimit(GenerateOrderId(), exchange.Price.Ticker, -1, buyingQuantity, exchange.Price.PriceValue * 0.98m, exchange.Price.PriceValue * 1.01m);
                         SendOrderSignal(order);
                         cash -= buyingQuantity * exchange.Price.PriceValue;
                     }

@@ -22,10 +22,8 @@ namespace Trading_bot.Market
         protected virtual void OnOrderSold(OrderLimit order)
         {
             OrderSold?.Invoke(this, order);
-            Console.WriteLine("before selling, orders size" + orders.Count);
             orders.Remove(order);
             Console.WriteLine("Order sold:" + order.OrderId);
-            Console.WriteLine("after selling, orders size" + orders.Count);
         }
 
         public void SendingOrderSold(OrderLimit order)
@@ -44,11 +42,13 @@ namespace Trading_bot.Market
                 if (priceValue >= order.takeProfitPrice)
                 {
                     Console.WriteLine("TK reached: " + order.takeProfitPrice + " at:" + priceValue);
+                    order.Price = priceValue;
                     SendingOrderSold(order);
                 }
                 else if (priceValue <= order.stopLossPrice)
                 {
                     Console.WriteLine("SL reached: " + order.stopLossPrice + " at:" + priceValue);
+                    order.Price = priceValue;
                     SendingOrderSold(order);
                 }
             }
