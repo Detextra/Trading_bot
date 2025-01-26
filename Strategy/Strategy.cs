@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Trading_bot.Central;
 using Trading_bot.Data;
 using Trading_bot.Market;
+using Trading_bot.Risk;
 using Trading_bot.Strategy.Position;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using static Trading_bot.Market.Order;
@@ -16,6 +17,7 @@ namespace Trading_bot.Strategy
     {
         public string strategyName;
         public PositionManager positionManager;
+        public RiskModule riskModule;
         public OrderIn orderInputToMarket;
         public Core core;
         public Exchange exchange;
@@ -27,6 +29,7 @@ namespace Trading_bot.Strategy
         {
             this.strategyName = strategyName;
             positionManager = new PositionManager();
+            riskModule = new RiskModule(cash);
             this.exchange = exchange;
             orderInputToMarket = new OrderIn(exchange);
             this.cash = cash;

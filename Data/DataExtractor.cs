@@ -10,8 +10,6 @@ class DataExtractor
     // https://forextester.com/data/datasources
     public static string dataSource = "../../../../data/EURUSD/EURUSD_23y_1min.txt";
 
-    public static List<OhclData> data15min;
-
     //static void Main()
     //{
     //    string startDate = "20230101"; // Start date in format YYYYMMDD
