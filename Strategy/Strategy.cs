@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Trading_bot.Central;
-using Trading_bot.Data;
-using Trading_bot.Market;
-using Trading_bot.Risk;
-using Trading_bot.Strategy.Position;
+using Trading_bot_WPF.Central;
+using Trading_bot_WPF.Data;
+using Trading_bot_WPF.Market;
+using Trading_bot_WPF.Risk;
+using Trading_bot_WPF.Strategy.Position;
 using static System.Runtime.InteropServices.JavaScript.JSType;
-using static Trading_bot.Market.Order;
+using static Trading_bot_WPF.Market.Order;
 
-namespace Trading_bot.Strategy
+namespace Trading_bot_WPF.Strategy
 {
     internal abstract class Strategy
     {

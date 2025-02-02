@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Trading_bot.Market
+namespace Trading_bot_WPF.Market
 {
     internal class OrderLimit : Order
     {

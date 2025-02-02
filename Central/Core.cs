@@ -4,9 +4,9 @@ using System.Linq;
 using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
-using Trading_bot.Data;
+using Trading_bot_WPF.Data;
 
-namespace Trading_bot.Central
+namespace Trading_bot_WPF.Central
 {
     internal class Core
     {

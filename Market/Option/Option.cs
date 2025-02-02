@@ -1,4 +1,4 @@
-﻿namespace Trading_bot.Market.Option
+﻿namespace Trading_bot_WPF.Market.Option
 {
     internal abstract class Option
     {

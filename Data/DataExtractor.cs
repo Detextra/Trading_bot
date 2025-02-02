@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using Trading_bot.Data;
+using Trading_bot_WPF.Data;
 class DataExtractor
 {
     // format is 20010102,230100 -> 2001/01/02 (YYYY/MM/DD) 23h01 00 secondes

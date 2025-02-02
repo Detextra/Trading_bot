@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Trading_bot.Central;
-using Trading_bot.Data;
-using Trading_bot.Market;
+using Trading_bot_WPF.Central;
+using Trading_bot_WPF.Data;
+using Trading_bot_WPF.Market;
 
-namespace Trading_bot.Strategy
+namespace Trading_bot_WPF.Strategy
 {
     internal class StrategyManager
     {

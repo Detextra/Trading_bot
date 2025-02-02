@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Trading_bot.Strategy.Position
+namespace Trading_bot_WPF.Strategy.Position
 {
     internal abstract class Position
     {

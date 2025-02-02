@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Trading_bot.Market;
+using Trading_bot_WPF.Market;
 
-namespace Trading_bot.Strategy.Position
+namespace Trading_bot_WPF.Strategy.Position
 {
     internal class PositionManager
     {
