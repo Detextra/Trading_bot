@@ -30,6 +30,7 @@ namespace Trading_bot_WPF.Strategy
             foreach (Strategy strategy in strategyList)
             {
                 strategy.RunStrategy();
+                strategy.riskModule.OnPriceReceived(this, price);
                 //Console.WriteLine(" qtt asset : "+strategy.positionManager.GetQuantityOfAsset());
             }
         }
