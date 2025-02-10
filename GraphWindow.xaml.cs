@@ -22,8 +22,24 @@ namespace Trading_bot_WPF
             }
 
             model.Series.Add(series);
-            model.Axes.Add(new LinearAxis { Position = AxisPosition.Bottom, Title = "Time" });
-            model.Axes.Add(new LinearAxis { Position = AxisPosition.Left, Title = "Risk" });
+
+            model.Axes.Add(new DateTimeAxis
+            {
+                Position = AxisPosition.Bottom,
+                Title = "Date",
+                StringFormat = "MM/dd/yy",
+                IntervalType = DateTimeIntervalType.Days,
+                MajorGridlineStyle = LineStyle.Solid,
+                MinorGridlineStyle = LineStyle.Dash,
+                MinimumPadding = 0.1,
+                MaximumPadding = 0.1
+            });
+
+            model.Axes.Add(new LinearAxis
+            {
+                Position = AxisPosition.Left,
+                Title = "Risk"
+            });
 
             PlotView.Model = model;
         }
