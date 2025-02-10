@@ -5,6 +5,7 @@ using Trading_bot_WPF.Central;
 using Trading_bot_WPF.Market;
 using Trading_bot_WPF.Strategy;
 using Trading_bot_WPF.Strategy.StrategyType;
+using Trading_bot_WPF.Data;
 
 namespace Trading_bot_WPF
 {
