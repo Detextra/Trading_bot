@@ -19,6 +19,12 @@ namespace Trading_bot_WPF.Central
             OhclDatas = new List<OhclData>();
             currentOhcl = OhclData.beforeFirstTick();
         }
+        public OhclList()
+        {
+            this.OhclTimeFrame = 0;
+            OhclDatas = new List<OhclData>();
+        }
+
 
         public void Add (Price price)
         {

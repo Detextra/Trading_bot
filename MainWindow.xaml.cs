@@ -34,10 +34,10 @@ namespace Trading_bot_WPF
         }
 
         // This method is called when graph data is ready
-        private void OnGraphDataReady(List<DataPoint> dataPoints, string strategyName)
+        private void OnGraphDataReady(List<DataPoint> perfDatas, List<DataPoint> marketPrices, string strategyName)
         {
             // Create a new GraphWindow for each strategy's graph
-            var graphWindow = new GraphWindow(dataPoints, strategyName);
+            var graphWindow = new GraphWindow(perfDatas, marketPrices, strategyName);
             graphWindow.Show();
         }
     }
