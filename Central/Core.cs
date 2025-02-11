@@ -1,10 +1,12 @@
-﻿using System;
+﻿using OxyPlot;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
 using Trading_bot_WPF.Data;
+using Trading_bot_WPF.Risk;
 
 namespace Trading_bot_WPF.Central
 {
@@ -21,7 +23,9 @@ namespace Trading_bot_WPF.Central
                 Console.WriteLine("Creating OhclDatas for " +  period + " minutes period");
                 OhclDatas.Add(new OhclList(period));
             }
-                
+
+            // add a 24h OhclDatas to plot it in comparison of risk/performance end of trading chart
+            OhclDatas.Add(new OhclList(60*24));
         }
         public void OnPriceReceived(object sender, Price price)
         {
@@ -85,6 +89,31 @@ namespace Trading_bot_WPF.Central
                 list.PrintOhclList();
             }            
         }
+
+        public OhclList GetOhclListsByPeriodInMinutes (int periodInMinutes)
+        {
+            foreach (OhclList list in OhclDatas)
+            {
+                if (list.OhclTimeFrame == periodInMinutes)
+                {
+                    return list;
+                }
+            }
+            return new OhclList();
+        }
+
+        public List<DataPoint> Get24HoursOhclListsForPlotting()
+        {
+            OhclList ohcl24h = GetOhclListsByPeriodInMinutes(60 * 24);
+            List<DataPoint> dataPoints = ohcl24h.OhclDatas
+            .OrderBy(o => o.Date + o.Time)
+            .Select(o => new DataPoint(
+                DateTime.ParseExact(o.Date + o.Time, "yyyyMMddHHmmss", null).ToOADate(),
+                (double)o.ClosePrice))
+            .ToList();
+            return dataPoints;
+        }
+
 
     }
 

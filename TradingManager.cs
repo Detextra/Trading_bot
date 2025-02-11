@@ -5,6 +5,7 @@ using Trading_bot_WPF.Central;
 using Trading_bot_WPF.Market;
 using Trading_bot_WPF.Strategy;
 using Trading_bot_WPF.Strategy.StrategyType;
+using Trading_bot_WPF.Data;
 
 namespace Trading_bot_WPF
 {
@@ -15,7 +16,7 @@ namespace Trading_bot_WPF
         private Exchange exchange;
         private StrategyManager strategyManager;
 
-        public event Action<List<DataPoint>, string> GraphDataReady;
+        public event Action<List<DataPoint>, List<DataPoint>, string> GraphDataReady;
 
         public TradingManager()
         {
@@ -41,7 +42,7 @@ namespace Trading_bot_WPF
             foreach (var strategy in strategyManager.strategyList)
             {
                 List<DataPoint> riskData = strategy.riskModule.GetRiskData();
-                GraphDataReady?.Invoke(riskData, strategy.strategyName);
+                GraphDataReady?.Invoke(riskData, core.Get24HoursOhclListsForPlotting(), strategy.strategyName);
             }
         }
 
