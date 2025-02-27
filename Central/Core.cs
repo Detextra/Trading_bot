@@ -113,12 +113,13 @@ namespace Trading_bot_WPF.Central
 
             if (ohclList.OhclDatas == null || ohclList.OhclDatas.Count == 0)
                 return 0m;
-
-            DateTime cutoffTime = DateTime.UtcNow.AddHours(-24);
+            OhclData last = ohclList.OhclDatas.Last();
+            DateTime cutoffTime = DateTime.ParseExact(last.Date+last.Time, "yyyyMMddHHmmss", null).AddHours(-24);
 
             // todo : bug never find ohcl in the period
             var filteredData = ohclList.OhclDatas
-                .Where(ohcl => DateTime.TryParse(ohcl.Date, out DateTime timestamp) && timestamp >= cutoffTime)
+                .Where(ohcl => DateTime.TryParseExact(ohcl.Date+ohcl.Time, "yyyyMMddHHmmss", null, System.Globalization.DateTimeStyles.None, 
+                out DateTime timestamp) && timestamp >= cutoffTime)
                 .ToList();
 
             if (filteredData.Count == 0)
