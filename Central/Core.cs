@@ -17,16 +17,29 @@ namespace Trading_bot_WPF.Central
 
         public Core(int[] periodInMinutes)
         {
+            List<int> periodList = new List<int>(periodInMinutes);
+            
+            // adding 1 minutes Ohcl for slippage & spread
+            if (!periodList.Contains(1))
+            {
+                periodList.Add(1);
+            }
+
+            // add a 24h OhclDatas to plot it in comparison of risk/performance end of trading chart
+            if (!periodList.Contains(1440))
+            {
+                periodList.Add(1440);
+            }
+
             OhclDatas = new List<OhclList>();
-            foreach (int period in periodInMinutes)
+
+            foreach (int period in periodList)
             {
                 Console.WriteLine("Creating OhclDatas for " +  period + " minutes period");
                 OhclDatas.Add(new OhclList(period));
             }
-
-            // add a 24h OhclDatas to plot it in comparison of risk/performance end of trading chart
-            OhclDatas.Add(new OhclList(60*24));
         }
+
         public void OnPriceReceived(object sender, Price price)
         {
             //Console.WriteLine($"Core received price: {price.PriceValue}");
@@ -109,7 +122,7 @@ namespace Trading_bot_WPF.Central
 
         public decimal GetSlippageAmountPctLast24H(decimal slippage)
         {
-            OhclList ohclList = GetOhclListsWithShortestPeriodInMinutes();
+            OhclList ohclList = GetOhclListsByPeriodInMinutes(1);
 
             if (ohclList.OhclDatas == null || ohclList.OhclDatas.Count == 0)
                 return 0m;
@@ -141,7 +154,7 @@ namespace Trading_bot_WPF.Central
 
             if (ohclList.Count < periodForAverage) return 0.01m;
 
-            decimal sum = 0;
+            decimal sum = 0; 
             for (int i = ohclList.Count - periodForAverage; i < ohclList.Count; i++)
             {
                 sum += ohclList[i].HighPrice - ohclList[i].LowPrice;
@@ -153,7 +166,7 @@ namespace Trading_bot_WPF.Central
 
         public List<DataPoint> Get24HoursOhclListsForPlotting()
         {
-            OhclList ohcl24h = GetOhclListsByPeriodInMinutes(60 * 24);
+            OhclList ohcl24h = GetOhclListsByPeriodInMinutes(1440);
             List<DataPoint> dataPoints = ohcl24h.OhclDatas
             .OrderBy(o => o.Date + o.Time)
             .Select(o => new DataPoint(
