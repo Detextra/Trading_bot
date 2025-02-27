@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Trading_bot_WPF.Central;
 using Trading_bot_WPF.Data;
 using Trading_bot_WPF.Strategy.Position;
 
@@ -10,16 +11,23 @@ namespace Trading_bot_WPF.Market
 {
     internal class Exchange
     {
+        public Core ohclDatas;
         public Price Price;
 
         public PositionManager allPositions;
         public OrderManagement allOrders;
 
-        public Exchange ()
+        public decimal slippage;
+        public decimal volatilityPctForATR;
+
+        public Exchange(Core ohclDatas, decimal slippage = 0, decimal volatilityPctForATR = 0)
         {
+            this.ohclDatas = ohclDatas;
             Price = new Price("", "", "", -1); ;
             allPositions = new PositionManager();
-            allOrders = new OrderManagement();
+            allOrders = new OrderManagement(this);
+            this.slippage = slippage;
+            this.volatilityPctForATR = volatilityPctForATR;
         }
 
         public void OnPriceReceived(object sender, Price price)
@@ -35,11 +43,8 @@ namespace Trading_bot_WPF.Market
 
             if (o != null)
             {
-                if (o.Price < Price.PriceValue * (decimal)1.02 && o.Price > Price.PriceValue * (decimal)0.98) // spread management -> better in a proper fonction
-                {
-                    return new OrderSpotDone(o.OrderId, o.Ticker, Price.PriceValue, o.Quantity);
-                }
-                return new OrderSpotDone(o.OrderId, o.Ticker, Price.PriceValue, 0);
+                return new OrderSpotDone(o.OrderId, o.Ticker, Price.PriceValue, o.Quantity);
+                
             }
             return new OrderSpotDone(o.OrderId, "error no ticker", Price.PriceValue, 0);
         }
@@ -71,6 +76,20 @@ namespace Trading_bot_WPF.Market
         public decimal GetPrice ()
         {
             return Price.PriceValue;
+        }
+
+        public decimal ApplySpread(decimal orderPrice, bool isBuyOrder)
+        {
+            decimal spread = ohclDatas.EstimateSpread(volatilityPctForATR);
+            decimal priceWithSpread = isBuyOrder ? orderPrice + (spread / 2) : orderPrice - (spread / 2);
+            return priceWithSpread;
+        }
+
+        public decimal ApplySlippage (decimal orderPrice)
+        {
+            decimal slippageAmount = ohclDatas.GetSlippageAmountPctLast24H(slippage);
+            orderPrice += slippageAmount;
+            return orderPrice;
         }
     }
 }

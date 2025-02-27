@@ -102,6 +102,54 @@ namespace Trading_bot_WPF.Central
             return new OhclList();
         }
 
+        public OhclList GetOhclListsWithShortestPeriodInMinutes()
+        {
+            return OhclDatas.MinBy(list => list.OhclTimeFrame) ?? new OhclList();
+        }
+
+        public decimal GetSlippageAmountPctLast24H(decimal slippage)
+        {
+            OhclList ohclList = GetOhclListsWithShortestPeriodInMinutes();
+
+            if (ohclList.OhclDatas == null || ohclList.OhclDatas.Count == 0)
+                return 0m;
+
+            DateTime cutoffTime = DateTime.UtcNow.AddHours(-24);
+
+            // todo : bug never find ohcl in the period
+            var filteredData = ohclList.OhclDatas
+                .Where(ohcl => DateTime.TryParse(ohcl.Date, out DateTime timestamp) && timestamp >= cutoffTime)
+                .ToList();
+
+            if (filteredData.Count == 0)
+                return 0m;
+
+            decimal lowestPrice = filteredData.Min(ohcl => ohcl.LowPrice);
+            decimal highestPrice = filteredData.Max(ohcl => ohcl.HighPrice);
+
+            decimal volatility = highestPrice-lowestPrice;
+            return volatility * slippage;
+        }
+
+        // using Average True Range (ATR)
+        public decimal EstimateSpread(decimal volatility, int periodForAverage = 24 * 60)
+        {
+            List<OhclData> ohclList = GetOhclListsByPeriodInMinutes(1).OhclDatas;
+            if(ohclList == null || ohclList.Count == 0)
+                return 0m;
+
+            if (ohclList.Count < periodForAverage) return 0.01m;
+
+            decimal sum = 0;
+            for (int i = ohclList.Count - periodForAverage; i < ohclList.Count; i++)
+            {
+                sum += ohclList[i].HighPrice - ohclList[i].LowPrice;
+            }
+
+            decimal atr = sum / periodForAverage;
+            return atr * volatility;
+        }
+
         public List<DataPoint> Get24HoursOhclListsForPlotting()
         {
             OhclList ohcl24h = GetOhclListsByPeriodInMinutes(60 * 24);
