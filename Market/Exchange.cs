@@ -49,7 +49,7 @@ namespace Trading_bot_WPF.Market
             return new OrderSpotDone(o.OrderId, "error no ticker", Price.PriceValue, 0);
         }
 
-        public void ProcessOrder(OrderLimit o)
+        public OrderLimit ProcessOrder(OrderLimit o)
         {
             if (o != null)
             {
@@ -57,9 +57,11 @@ namespace Trading_bot_WPF.Market
                 //{
                     allOrders.orders.Add(o);
                     Console.WriteLine("Order Limit id: "+o.OrderId+" processed for " + o.Quantity + " asset at " + o.Price);
+                return o;
                 //}
                 //Console.WriteLine("Sl or TJ already hitten");
             }
+            return null;
         }
 
         // for debug purpose

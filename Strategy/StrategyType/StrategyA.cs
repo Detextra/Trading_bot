@@ -47,7 +47,6 @@ namespace Trading_bot_WPF.Strategy.StrategyType
                         // stop loss 2%, profit 1%
                         OrderLimit order = new OrderLimit(GenerateOrderId(), exchange.Price.Ticker, exchange.GetPrice(), buyingQuantity, exchange.Price.PriceValue * 0.98m, exchange.Price.PriceValue * 1.01m);
                         SendOrderSignal(order);
-                        cash -= buyingQuantity * exchange.Price.PriceValue;
                     }
                 }
             }

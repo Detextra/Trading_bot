@@ -24,7 +24,7 @@ namespace Trading_bot_WPF
             int[] ohclPeriods = { 1, 5, 15 };
             core = new Core(ohclPeriods);
             decimal slippage = new decimal(0.02); // in %
-            decimal volatilityPctForATR = new decimal(0.1); // in %
+            decimal volatilityPctForATR = new decimal(0.01); // in %
             exchange = new Exchange(core, slippage, volatilityPctForATR);
             strategyManager = new StrategyManager(core, exchange);
 

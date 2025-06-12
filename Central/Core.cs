@@ -142,7 +142,7 @@ namespace Trading_bot_WPF.Central
             decimal highestPrice = filteredData.Max(ohcl => ohcl.HighPrice);
 
             decimal volatility = highestPrice-lowestPrice;
-            return volatility * slippage;
+            return volatility+slippage;
         }
 
         // using Average True Range (ATR)
@@ -152,7 +152,7 @@ namespace Trading_bot_WPF.Central
             if(ohclList == null || ohclList.Count == 0)
                 return 0m;
 
-            if (ohclList.Count < periodForAverage) return 0.01m;
+            if (ohclList.Count < periodForAverage) return (0.01m+volatility)/2; // 0.01 is quite low for testing so adding volatility to bump up the spread
 
             decimal sum = 0; 
             for (int i = ohclList.Count - periodForAverage; i < ohclList.Count; i++)
@@ -161,6 +161,10 @@ namespace Trading_bot_WPF.Central
             }
 
             decimal atr = sum / periodForAverage;
+            if (atr == 0)
+            {
+                return (0.01m + volatility) / 2;
+            }
             return atr * volatility;
         }
 

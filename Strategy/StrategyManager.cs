@@ -26,12 +26,13 @@ namespace Trading_bot_WPF.Strategy
 
         public void OnPriceReceived(object sender, Price price)
         {
-            //Console.WriteLine($"StrategyManager received price: {price.PriceValue}");
+            Console.WriteLine($"StrategyManager received price: {price.PriceValue}");
             foreach (Strategy strategy in strategyList)
             {
                 strategy.RunStrategy();
                 strategy.riskModule.OnPriceReceived(this, price);
-                //Console.WriteLine(" qtt asset : "+strategy.positionManager.GetQuantityOfAsset());
+                Console.WriteLine(" cash : "+strategy.cash);
+                Console.WriteLine(" qtt asset : "+strategy.positionManager.GetQuantityOfAsset());
             }
         }
 

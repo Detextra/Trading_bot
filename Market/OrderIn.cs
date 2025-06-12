@@ -18,7 +18,7 @@ namespace Trading_bot_WPF.Market
 			this.market = market;
 		}
 
-        public void AddingFeesAndSlippageToOrder (OrderLimit orderLimit)
+        public OrderLimit AddingFeesAndSlippageToOrder (OrderLimit orderLimit)
 		{
 			// manageing buying order
 			if (orderLimit?.Quantity > 0)
@@ -32,9 +32,9 @@ namespace Trading_bot_WPF.Market
                 // Managing Order fees of 0.1%
                 orderLimit.Price *= (decimal)1.001;
 
-				market.ProcessOrder(orderLimit);
+				return market.ProcessOrder(orderLimit);
 			}
- 
+			return null;
 		}
 
 	}

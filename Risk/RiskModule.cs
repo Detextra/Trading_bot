@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Trading_bot_WPF.Data;
 using Trading_bot_WPF.Market;
 using Trading_bot_WPF.Strategy;
+using Trading_bot_WPF.Strategy.Position;
 using Trading_bot_WPF.Strategy.StrategyType;
 
 namespace Trading_bot_WPF.Risk
@@ -24,15 +25,21 @@ namespace Trading_bot_WPF.Risk
             ordersLimit = new List<OrderLimit>();
         }
 
+        public int GetQuantityOfAsset()
+        {
+            int quantity = 0;
+            foreach (OrderLimit position in ordersLimit)
+            {
+                quantity += position.Quantity;
+            }
+            return quantity;
+        }
+
         public void OnPriceReceived(object sender, Price price)
         {
-            decimal actualCash = cash;
-            foreach (OrderLimit orderLimit in ordersLimit)
-            {
-                actualCash -= orderLimit.Price * orderLimit.Quantity;
-            }
             RiskData riskData = new RiskData();
-            riskData.value = actualCash;
+            // TODO manage the orde filled as event so the risk can get all the ongoing order
+            riskData.value = cash + GetQuantityOfAsset() * price.PriceValue;
             riskDatas.Add(Tuple.Create(price.Date + "" + price.Time, riskData));
         }
 
