@@ -17,16 +17,29 @@ namespace Trading_bot_WPF.Central
 
         public Core(int[] periodInMinutes)
         {
+            List<int> periodList = new List<int>(periodInMinutes);
+            
+            // adding 1 minutes Ohcl for slippage & spread
+            if (!periodList.Contains(1))
+            {
+                periodList.Add(1);
+            }
+
+            // add a 24h OhclDatas to plot it in comparison of risk/performance end of trading chart
+            if (!periodList.Contains(1440))
+            {
+                periodList.Add(1440);
+            }
+
             OhclDatas = new List<OhclList>();
-            foreach (int period in periodInMinutes)
+
+            foreach (int period in periodList)
             {
                 Console.WriteLine("Creating OhclDatas for " +  period + " minutes period");
                 OhclDatas.Add(new OhclList(period));
             }
-
-            // add a 24h OhclDatas to plot it in comparison of risk/performance end of trading chart
-            OhclDatas.Add(new OhclList(60*24));
         }
+
         public void OnPriceReceived(object sender, Price price)
         {
             //Console.WriteLine($"Core received price: {price.PriceValue}");
@@ -102,9 +115,62 @@ namespace Trading_bot_WPF.Central
             return new OhclList();
         }
 
+        public OhclList GetOhclListsWithShortestPeriodInMinutes()
+        {
+            return OhclDatas.MinBy(list => list.OhclTimeFrame) ?? new OhclList();
+        }
+
+        public decimal GetSlippageAmountPctLast24H(decimal slippage)
+        {
+            OhclList ohclList = GetOhclListsByPeriodInMinutes(1);
+
+            if (ohclList.OhclDatas == null || ohclList.OhclDatas.Count == 0)
+                return 0m;
+            OhclData last = ohclList.OhclDatas.Last();
+            DateTime cutoffTime = DateTime.ParseExact(last.Date+last.Time, "yyyyMMddHHmmss", null).AddHours(-24);
+
+            // todo : bug never find ohcl in the period
+            var filteredData = ohclList.OhclDatas
+                .Where(ohcl => DateTime.TryParseExact(ohcl.Date+ohcl.Time, "yyyyMMddHHmmss", null, System.Globalization.DateTimeStyles.None, 
+                out DateTime timestamp) && timestamp >= cutoffTime)
+                .ToList();
+
+            if (filteredData.Count == 0)
+                return 0m;
+
+            decimal lowestPrice = filteredData.Min(ohcl => ohcl.LowPrice);
+            decimal highestPrice = filteredData.Max(ohcl => ohcl.HighPrice);
+
+            decimal volatility = highestPrice-lowestPrice;
+            return volatility+slippage;
+        }
+
+        // using Average True Range (ATR)
+        public decimal EstimateSpread(decimal volatility, int periodForAverage = 24 * 60)
+        {
+            List<OhclData> ohclList = GetOhclListsByPeriodInMinutes(1).OhclDatas;
+            if(ohclList == null || ohclList.Count == 0)
+                return 0m;
+
+            if (ohclList.Count < periodForAverage) return (0.01m+volatility)/2; // 0.01 is quite low for testing so adding volatility to bump up the spread
+
+            decimal sum = 0; 
+            for (int i = ohclList.Count - periodForAverage; i < ohclList.Count; i++)
+            {
+                sum += ohclList[i].HighPrice - ohclList[i].LowPrice;
+            }
+
+            decimal atr = sum / periodForAverage;
+            if (atr == 0)
+            {
+                return (0.01m + volatility) / 2;
+            }
+            return atr * volatility;
+        }
+
         public List<DataPoint> Get24HoursOhclListsForPlotting()
         {
-            OhclList ohcl24h = GetOhclListsByPeriodInMinutes(60 * 24);
+            OhclList ohcl24h = GetOhclListsByPeriodInMinutes(1440);
             List<DataPoint> dataPoints = ohcl24h.OhclDatas
             .OrderBy(o => o.Date + o.Time)
             .Select(o => new DataPoint(

@@ -11,10 +11,12 @@ namespace Trading_bot_WPF.Market
 {
     internal class OrderManagement
     {
+        public Exchange market;
         public List<OrderLimit> orders;
-        public OrderManagement ()
+        public OrderManagement (Exchange market)
         {
             orders = new List<OrderLimit>();
+            this.market = market;
         }
 
         public event EventHandler<OrderLimit> OrderSold;
@@ -39,17 +41,26 @@ namespace Trading_bot_WPF.Market
             List<OrderLimit> ordersCopy = new List<OrderLimit>(orders);
             foreach (OrderLimit order in ordersCopy)
             {
-                if (priceValue >= order.takeProfitPrice)
+                if (priceValue >= order.takeProfitPrice || priceValue <= order.stopLossPrice)
                 {
-                    Console.WriteLine("TK reached: " + order.takeProfitPrice + " at:" + priceValue);
                     order.Price = priceValue;
+
+                    // Managing spread
+                    order.Price = market.ApplySpread(order.Price, false); ;
+
+                    // Managing Order Slippage
+                    order.Price = market.ApplySlippage(order.Price);
+
                     SendingOrderSold(order);
-                }
-                else if (priceValue <= order.stopLossPrice)
-                {
-                    Console.WriteLine("SL reached: " + order.stopLossPrice + " at:" + priceValue);
-                    order.Price = priceValue;
-                    SendingOrderSold(order);
+
+                    if (priceValue >= order.takeProfitPrice)
+                    {
+                        Console.WriteLine("TK reached: " + order.takeProfitPrice + " at:" + priceValue + " ; after spread and slippage: " + order.Price);
+                    }
+                    else
+                    {
+                        Console.WriteLine("TK reached: " + order.takeProfitPrice + " at:" + priceValue + " ; after spread and slippage: " + order.Price);
+                    }
                 }
             }
         }

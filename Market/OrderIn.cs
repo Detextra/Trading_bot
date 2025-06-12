@@ -18,19 +18,23 @@ namespace Trading_bot_WPF.Market
 			this.market = market;
 		}
 
-        public void AddingFeesAndSlippageToOrder (OrderLimit orderLimit)
+        public OrderLimit AddingFeesAndSlippageToOrder (OrderLimit orderLimit)
 		{
 			// manageing buying order
 			if (orderLimit?.Quantity > 0)
 			{
-				// Managing Order Slippage
+				// Managing spread
+				orderLimit.Price = market.ApplySpread(orderLimit.Price, true);
 
-				// Managing Order fees of 0.1%
-				orderLimit.Price *= (decimal)1.001;
+                // Managing Order Slippage
+				orderLimit.Price = market.ApplySlippage(orderLimit.Price);
 
-				market.ProcessOrder(orderLimit);
+                // Managing Order fees of 0.1%
+                orderLimit.Price *= (decimal)1.001;
+
+				return market.ProcessOrder(orderLimit);
 			}
- 
+			return null;
 		}
 
 	}

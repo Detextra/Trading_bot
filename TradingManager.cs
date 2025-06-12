@@ -23,7 +23,9 @@ namespace Trading_bot_WPF
             dataExtractor = new DataExtractor();
             int[] ohclPeriods = { 1, 5, 15 };
             core = new Core(ohclPeriods);
-            exchange = new Exchange();
+            decimal slippage = new decimal(0.02); // in %
+            decimal volatilityPctForATR = new decimal(0.01); // in %
+            exchange = new Exchange(core, slippage, volatilityPctForATR);
             strategyManager = new StrategyManager(core, exchange);
 
             strategyManager.AddStrategy("StrategyA", 3m);

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 using Trading_bot_WPF.Central;
@@ -96,7 +97,7 @@ namespace Trading_bot_WPF.Strategy
             return orderDone;
         }
 
-        public void SendOrderSignal (OrderLimit order)
+        public bool SendOrderSignal (OrderLimit order)
         {
 
             // In a limit order, the order is only ended by the stopLoss or the takeProfit, so the "sell" is automatic
@@ -106,7 +107,15 @@ namespace Trading_bot_WPF.Strategy
             //    cash += Math.Abs(orderDone.Quantity) * orderDone.Price;
             //    positionManager.RemovePosition(orderDone.Ticker, orderDone.Quantity);
             //}
-            orderInputToMarket.AddingFeesAndSlippageToOrder(order);
+            OrderLimit done = orderInputToMarket.AddingFeesAndSlippageToOrder(order);
+            if (done != null)
+            {
+                decimal spent = done.Quantity * exchange.Price.PriceValue;
+                cash -= spent;
+                this.riskModule.cash -= spent;
+                return true;
+            }
+            return false;
         }
 
         public void PrintSummaryOfStrategy ()
