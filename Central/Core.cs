@@ -142,7 +142,7 @@ namespace Trading_bot_WPF.Central
             decimal highestPrice = filteredData.Max(ohcl => ohcl.HighPrice);
 
             decimal volatility = highestPrice-lowestPrice;
-            return volatility+slippage;
+            return volatility;
         }
 
         // using Average True Range (ATR)
