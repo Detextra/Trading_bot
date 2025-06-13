@@ -50,7 +50,7 @@ namespace Trading_bot_WPF.Central
         {
             foreach (var item in OhclDatas)
             {
-                OhclData ohclData = item.currentOhcl;
+                 OhclData ohclData = item.currentOhcl;
                 // this is a new OhclData
                 if (string.IsNullOrEmpty(ohclData.Date) && string.IsNullOrEmpty(ohclData.Time))
                 {

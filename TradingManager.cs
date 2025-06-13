@@ -6,6 +6,7 @@ using Trading_bot_WPF.Market;
 using Trading_bot_WPF.Strategy;
 using Trading_bot_WPF.Strategy.StrategyType;
 using Trading_bot_WPF.Data;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Trading_bot_WPF
 {
@@ -40,7 +41,14 @@ namespace Trading_bot_WPF
 
         public void RunTrading()
         {
-            dataExtractor.ReadPriceAndSendThem("../../../../data/EURUSD/EURUSD_20230101-20240822.txt");
+            strategyManager.StartThreadRiskModule();
+
+            string EURUSD_23y_1min = "../../../../data/EURUSD/EURUSD_23y_1min.txt";
+            string EURUSD_17months_1min = "../../../../data/EURUSD/EURUSD_20230101-20240822.txt";
+            dataExtractor.ReadPriceAndSendThem(EURUSD_17months_1min);
+
+            // backtesting if finished when ReadPriceAndSendThem
+            strategyManager.StopThreadRiskModule();
 
             foreach (var strategy in strategyManager.strategyList)
             {

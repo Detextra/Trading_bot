@@ -1,5 +1,6 @@
 ﻿using OxyPlot;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,47 +19,109 @@ namespace Trading_bot_WPF.Risk
         public List<Tuple<string, RiskData>> riskDatas;
         public List<OrderLimit> ordersLimit;
 
+        private BlockingCollection<object> eventQueue;
+        private CancellationTokenSource cts;
+
         public RiskModule(decimal cash)
         {
             this.cash = cash;
             riskDatas = new List<Tuple<string, RiskData>>();
             ordersLimit = new List<OrderLimit>();
+            eventQueue = new BlockingCollection<object>();
+            cts = new CancellationTokenSource();
+        }
+        public void Start()
+        {
+            Task.Run(() => ProcessLoop(cts.Token), cts.Token);
+        }
+
+        public void Stop()
+        {
+            Console.WriteLine("RiskModule stopping...");
+            cts.Cancel();
+            eventQueue.CompleteAdding();
+            Console.WriteLine("RiskModule stopped.");
+        }
+
+        private void ProcessLoop(CancellationToken token)
+        {
+            try
+            {
+                foreach (var item in eventQueue.GetConsumingEnumerable(token))
+                {
+                    if (item is Price price)
+                    {
+                        HandlePrice(price);
+                    }
+                    else if (item is OrderLimit orderLimit)
+                    {
+                        ProcessOrderSold(orderLimit);
+                    }
+                }
+            }
+            catch (OperationCanceledException) { }
+        }
+
+        public void EnqueuePrice(Price price)
+        {
+            eventQueue.Add(price);
+        }
+
+        public void EnqueueOrder(OrderLimit orderLimit)
+        {
+            eventQueue.Add(orderLimit);
+        }
+
+        private void HandlePrice(Price price)
+        {
+            var riskData = new RiskData
+            {
+                value = cash + GetQuantityOfAsset() * price.PriceValue
+            };
+            string timestamp = price.Date + "" + price.Time;
+            lock (riskDatas)
+            {
+                riskDatas.Add(Tuple.Create(timestamp, riskData));
+            }
         }
 
         public int GetQuantityOfAsset()
         {
-            int quantity = 0;
-            foreach (OrderLimit position in ordersLimit)
+            lock (ordersLimit)
             {
-                quantity += position.Quantity;
+                return ordersLimit.Sum(order => order.Quantity);
             }
-            return quantity;
         }
 
         public void OnPriceReceived(object sender, Price price)
         {
-            RiskData riskData = new RiskData();
-            riskData.value = cash + GetQuantityOfAsset() * price.PriceValue;
-            riskDatas.Add(Tuple.Create(price.Date + "" + price.Time, riskData));
+            //RiskData riskData = new RiskData();
+            //riskData.value = cash + GetQuantityOfAsset() * price.PriceValue;
+            //riskDatas.Add(Tuple.Create(price.Date + "" + price.Time, riskData));
+            EnqueuePrice(price);
         }
 
         public void ProcessOrderSold(OrderLimit orderLimit)
         {
-            // the cash is not substracted when asset is bought for the order => add the buying and solding price to OrderLimit
-            cash += orderLimit.Price * orderLimit.Quantity;
-            ordersLimit.Remove(orderLimit);
+            lock (ordersLimit)
+            {
+                cash += orderLimit.Price * orderLimit.Quantity;
+                ordersLimit.Remove(orderLimit);
+            }
         }
 
         // convert into OxyPlot DataPoint
         public List<DataPoint> GetRiskData()
         {
-            List<DataPoint> dataPoints = riskDatas
-            .OrderBy(r => r.Item1)
-            .Select(r => new DataPoint(
-                DateTime.ParseExact(r.Item1, "yyyyMMddHHmmss", null).ToOADate(),
-                (double)r.Item2.value))
-            .ToList();
-            return dataPoints;
+            lock (riskDatas)
+            {
+                return riskDatas
+                    .OrderBy(r => r.Item1)
+                    .Select(r => new DataPoint(
+                        DateTime.ParseExact(r.Item1, "yyyyMMddHHmmss", null).ToOADate(),
+                        (double)r.Item2.value))
+                    .ToList();
+            }
         }
     }
 

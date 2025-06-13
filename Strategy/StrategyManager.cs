@@ -31,6 +31,7 @@ namespace Trading_bot_WPF.Strategy
             {
                 strategy.RunStrategy();
                 strategy.riskModule.OnPriceReceived(this, price);
+
                 Console.WriteLine(" cash : "+strategy.cash);
                 Console.WriteLine(" qtt asset : "+strategy.positionManager.GetQuantityOfAsset());
             }
@@ -72,6 +73,24 @@ namespace Trading_bot_WPF.Strategy
             foreach (Strategy strategy in strategyList)
             {
                 strategy.PrintSummaryOfStrategy();
+            }
+        }
+
+        public void StartThreadRiskModule()
+        {
+            foreach (var strategy in strategyList)
+            {
+                Console.WriteLine(strategy.strategyName + " starting RiskModule");
+                strategy.riskModule.Start();
+            }
+        }
+
+        public void StopThreadRiskModule()
+        {
+            foreach (var strategy in strategyList)
+            {
+                Console.WriteLine(strategy.strategyName+ " stopping RiskModule");
+                strategy.riskModule.Stop();
             }
         }
     }

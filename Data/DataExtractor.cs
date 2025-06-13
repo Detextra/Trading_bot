@@ -64,25 +64,20 @@ namespace Trading_bot_WPF.Data
 
                 while ((line = sr.ReadLine()) != null)
                 {
-                    // Skip the first line (header)
                     if (isFirstLine)
                     {
                         isFirstLine = false;
                         continue;
                     }
 
-                    // Split the line into parts
                     string[] parts = line.Split(',');
 
                     if (parts.Length >= 2)
                     {
-                        // Parse the date from the second field
                         DateTime currentDate = DateTime.ParseExact(parts[1], "yyyyMMdd", CultureInfo.InvariantCulture);
 
-                        // Check if the date is within the range
                         if (currentDate >= start && currentDate <= end)
                         {
-                            // Write the line to the output file
                             sw.WriteLine(line);
                         }
                     }
