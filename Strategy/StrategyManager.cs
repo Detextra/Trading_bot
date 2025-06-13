@@ -50,6 +50,17 @@ namespace Trading_bot_WPF.Strategy
             }
         }
 
+        public void OnOrderReceived(object sender, OrderLimit order)
+        {
+            foreach (Strategy strategy in strategyList)
+            {
+                if (order.OrderId.Contains(strategy.strategyName))
+                {
+                    strategy.riskModule.ordersLimit.Add(order);
+                }
+            }
+        }
+
         public void AddStrategy (string strategyType, decimal startingCash)
         {
             Strategy strategy = strategyFactory.CreateStrategy(strategyType, startingCash);

@@ -38,7 +38,6 @@ namespace Trading_bot_WPF.Risk
         public void OnPriceReceived(object sender, Price price)
         {
             RiskData riskData = new RiskData();
-            // TODO manage the orde filled as event so the risk can get all the ongoing order
             riskData.value = cash + GetQuantityOfAsset() * price.PriceValue;
             riskDatas.Add(Tuple.Create(price.Date + "" + price.Time, riskData));
         }

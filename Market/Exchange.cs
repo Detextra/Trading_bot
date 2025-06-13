@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 using Trading_bot_WPF.Central;
 using Trading_bot_WPF.Data;
 using Trading_bot_WPF.Strategy.Position;
@@ -37,6 +38,20 @@ namespace Trading_bot_WPF.Market
             allOrders.CheckingOrderStatus(price.PriceValue);
         }
 
+        public event EventHandler<OrderLimit> OrderReceived;
+
+        public void SendingOrderProcessed(OrderLimit order)
+        {
+            //Console.WriteLine($"Exchange processing order: {order}");
+            allOrders.orders.Add(order);
+            OnOrderReceived(order);
+        }
+
+        protected virtual void OnOrderReceived(OrderLimit order)
+        {
+            OrderReceived?.Invoke(this, order);
+        }
+
         // as OrderLimit utilize Position and no OrderLimitDone, use PositionSpot instead
         public OrderSpotDone ProcessOrder (OrderSpot o)
         {
@@ -55,8 +70,8 @@ namespace Trading_bot_WPF.Market
             {
                 //if (o.Price >= o.stopLossPrice && o.Price <= o.takeProfitPrice)
                 //{
-                    allOrders.orders.Add(o);
-                    Console.WriteLine("Order Limit id: "+o.OrderId+" processed for " + o.Quantity + " asset at " + o.Price);
+                SendingOrderProcessed(o);
+                Console.WriteLine("Order Limit id: "+o.OrderId+" processed for " + o.Quantity + " asset at " + o.Price);
                 return o;
                 //}
                 //Console.WriteLine("Sl or TJ already hitten");

@@ -35,6 +35,7 @@ namespace Trading_bot_WPF
             dataExtractor.PriceReceived += strategyManager.OnPriceReceived;
 
             exchange.allOrders.OrderSold += strategyManager.OnOrderSold;
+            exchange.OrderReceived += strategyManager.OnOrderReceived;
         }
 
         public void RunTrading()

@@ -36,6 +36,8 @@ namespace Trading_bot_WPF.Strategy
             this.cash = cash;
             this.core = core;
             orderId = 0;
+
+
         }
 
         public virtual void RunStrategy()
