@@ -34,7 +34,13 @@ namespace Trading_bot_WPF.Strategy.StrategyType
 
                 //}
                 //else 
-                if (oHCLDatas[oHCLDatas.Count - 1].ClosePrice < oHCLDatas[oHCLDatas.Count - 2].ClosePrice)
+                if (oHCLDatas[oHCLDatas.Count - 1] == null)
+                {
+                    var o = 89;
+                }
+                var a = oHCLDatas[oHCLDatas.Count - 1].ClosePrice;
+                var b = oHCLDatas[oHCLDatas.Count - 2].ClosePrice;
+                if (1 < b)
                 {
                     
                     int buyingQuantity = 1;

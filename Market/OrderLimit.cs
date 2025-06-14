@@ -10,11 +10,13 @@ namespace Trading_bot_WPF.Market
     {
         public decimal stopLossPrice;
         public decimal takeProfitPrice;
+        public bool sold;
 
         public OrderLimit (string OrderId, string Ticker, decimal Price, int Quantity, decimal stopLossPrice, decimal takeProfitPrice) : base (OrderId, Ticker, Price, Quantity)
         {
             this.stopLossPrice = stopLossPrice;
             this.takeProfitPrice = takeProfitPrice;
+            sold = false;
         }
     }
 

@@ -41,6 +41,7 @@ namespace Trading_bot_WPF
 
         public void RunTrading()
         {
+            strategyManager.Start();
             strategyManager.StartThreadRiskModule();
 
             string EURUSD_23y_1min = "../../../../data/EURUSD/EURUSD_23y_1min.txt";
@@ -49,6 +50,7 @@ namespace Trading_bot_WPF
 
             // backtesting if finished when ReadPriceAndSendThem
             strategyManager.StopThreadRiskModule();
+            strategyManager.Stop();
 
             foreach (var strategy in strategyManager.strategyList)
             {

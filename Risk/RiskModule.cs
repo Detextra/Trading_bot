@@ -55,7 +55,7 @@ namespace Trading_bot_WPF.Risk
                     }
                     else if (item is OrderLimit orderLimit)
                     {
-                        ProcessOrderSold(orderLimit);
+                        ProcessOrder(orderLimit);
                     }
                 }
             }
@@ -95,18 +95,23 @@ namespace Trading_bot_WPF.Risk
 
         public void OnPriceReceived(object sender, Price price)
         {
-            //RiskData riskData = new RiskData();
-            //riskData.value = cash + GetQuantityOfAsset() * price.PriceValue;
-            //riskDatas.Add(Tuple.Create(price.Date + "" + price.Time, riskData));
             EnqueuePrice(price);
         }
 
-        public void ProcessOrderSold(OrderLimit orderLimit)
+        public void ProcessOrder(OrderLimit orderLimit)
         {
             lock (ordersLimit)
             {
-                cash += orderLimit.Price * orderLimit.Quantity;
-                ordersLimit.Remove(orderLimit);
+                if (orderLimit.sold)
+                {
+                    cash += orderLimit.Price * orderLimit.Quantity;
+                    ordersLimit.Remove(orderLimit);
+                }
+                else
+                {
+                    ordersLimit.Add(orderLimit);
+                }
+                
             }
         }
 

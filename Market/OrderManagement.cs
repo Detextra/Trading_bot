@@ -23,6 +23,7 @@ namespace Trading_bot_WPF.Market
 
         protected virtual void OnOrderSold(OrderLimit order)
         {
+            order.sold = true;
             OrderSold?.Invoke(this, order);
             orders.Remove(order);
             Console.WriteLine("Order sold:" + order.OrderId);
@@ -46,7 +47,7 @@ namespace Trading_bot_WPF.Market
                     order.Price = priceValue;
 
                     // Managing spread
-                    order.Price = market.ApplySpread(order.Price, false); ;
+                    order.Price = market.ApplySpread(order.Price, false);
 
                     // Managing Order Slippage
                     order.Price = market.ApplySlippage(order.Price);
